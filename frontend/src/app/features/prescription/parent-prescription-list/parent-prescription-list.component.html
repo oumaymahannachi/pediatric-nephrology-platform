@@ -1,0 +1,162 @@
+<div class="prescription-list-container">
+  <div class="header">
+    <h2>My Children's Prescriptions</h2>
+  </div>
+
+  <div class="filter-section">
+    <div class="form-group">
+      <label for="childSelect">
+        <i class="fas fa-child"></i> Select a child
+      </label>
+      <select 
+        id="childSelect" 
+        [(ngModel)]="selectedChildId" 
+        (change)="onChildChange()"
+        class="form-control">
+        <option [ngValue]="null">-- Select a child --</option>
+        <option *ngFor="let child of children" [ngValue]="child.id">
+          {{ child.fullName }} - {{ child.dateOfBirth | date: 'dd/MM/yyyy' }} ({{ child.gender === 'MALE' ? 'Boy' : 'Girl' }})
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <i class="fas fa-spinner fa-spin"></i> Loading...
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !selectedChildId" class="info-message">
+    <i class="fas fa-info-circle"></i>
+    <p>Select a child to view their prescriptions</p>
+  </div>
+
+  <div *ngIf="!loading && selectedChildId && prescriptions.length === 0" class="empty-state">
+    <i class="fas fa-prescription"></i>
+    <p>No prescriptions found for this child</p>
+  </div>
+
+  <!-- Search and Sort -->
+  <div class="search-sort-section" *ngIf="!loading && prescriptions.length > 0">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input 
+        type="text" 
+        class="search-input" 
+        placeholder="Search by diagnosis, medication..." 
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChange()"
+      />
+      <button class="clear-btn" *ngIf="searchTerm" (click)="clearSearch()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="sort-controls">
+      <select class="sort-select" [(ngModel)]="sortBy" (ngModelChange)="onSortChange()">
+        <option value="date">Sort by date</option>
+        <option value="status">Sort by status</option>
+        <option value="diagnostic">Sort by diagnosis</option>
+      </select>
+      <button class="btn-sort" (click)="toggleSortOrder()">
+        <i [class]="sortOrder === 'asc' ? 'fas fa-arrow-up' : 'fas fa-arrow-down'"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Empty Search Results -->
+  <div *ngIf="!loading && prescriptions.length > 0 && filteredPrescriptions.length === 0" class="empty-filtered">
+    <i class="fas fa-search"></i>
+    <p>No prescriptions match your search</p>
+    <button class="btn-secondary" (click)="clearSearch()">Clear search</button>
+  </div>
+
+  <div class="prescriptions-grid" *ngIf="!loading && filteredPrescriptions.length > 0">
+    <div class="prescription-card" *ngFor="let prescription of filteredPrescriptions">
+      <div class="card-header">
+        <span class="prescription-date">
+          <i class="fas fa-calendar-alt"></i>
+          {{ prescription.datePrescription | date: 'dd/MM/yyyy' }}
+        </span>
+        <span class="status-badge" [ngClass]="getStatutClass(prescription.statut)">
+          {{ getStatutLabel(prescription.statut) }}
+        </span>
+      </div>
+
+      <div class="card-body">
+        <div class="diagnostic-section">
+          <h3><i class="fas fa-stethoscope"></i> Diagnosis</h3>
+          <p>{{ prescription.diagnostic }}</p>
+        </div>
+        
+        <div class="medications-section">
+          <h3><i class="fas fa-pills"></i> Medications ({{ prescription.medicaments.length }})</h3>
+          <div class="medication-list">
+            <div class="medication-item" *ngFor="let med of prescription.medicaments">
+              <div class="medication-header">
+                <strong>{{ med.nomCommercial }}</strong>
+                <span class="dci-badge">{{ med.dci }}</span>
+              </div>
+              
+              <div class="medication-details">
+                <div class="detail-row" *ngIf="med.formePharmaceutique || med.dosage">
+                  <i class="fas fa-capsules"></i>
+                  <span>{{ med.formePharmaceutique }} {{ med.dosage }}</span>
+                </div>
+                
+                <div class="detail-row">
+                  <i class="fas fa-clock"></i>
+                  <span>
+                    {{ med.posologie.quantite }} {{ med.posologie.unite }} - 
+                    {{ med.posologie.frequence }}
+                  </span>
+                </div>
+                
+                <div class="detail-row" *ngIf="med.posologie.momentPrise">
+                  <i class="fas fa-utensils"></i>
+                  <span>{{ med.posologie.momentPrise }}</span>
+                </div>
+                
+                <div class="detail-row" *ngIf="med.posologie.dureeTraitementJours">
+                  <i class="fas fa-hourglass-half"></i>
+                  <span>Duration: {{ med.posologie.dureeTraitementJours }} days</span>
+                </div>
+                
+                <div class="instructions" *ngIf="med.instructionsSpeciales">
+                  <i class="fas fa-info-circle"></i>
+                  <span>{{ med.instructionsSpeciales }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="prescription-info">
+          <div class="info-card">
+            <i class="fas fa-calendar-check"></i>
+            <div>
+              <small>Valid until</small>
+              <strong>{{ prescription.dateExpiration | date: 'dd/MM/yyyy' }}</strong>
+            </div>
+          </div>
+          
+          <div class="info-card" *ngIf="prescription.renouvelable">
+            <i class="fas fa-redo"></i>
+            <div>
+              <small>Renewable</small>
+              <strong>{{ prescription.nombreRenouvellementsRestants }} times</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="notes-section" *ngIf="prescription.notes">
+          <h4><i class="fas fa-sticky-note"></i> Doctor's notes</h4>
+          <p>{{ prescription.notes }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

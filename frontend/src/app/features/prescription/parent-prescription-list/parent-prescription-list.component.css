@@ -1,0 +1,367 @@
+.prescription-list-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.header h2 {
+  color: #2c3e50;
+  font-size: 28px;
+  margin: 0;
+}
+
+.filter-section {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.filter-section .form-group {
+  margin: 0;
+}
+
+.filter-section label {
+  color: #495057;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.filter-section .form-control {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.filter-section .form-control:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.info-message {
+  text-align: center;
+  padding: 40px;
+  background: #e7f3ff;
+  border: 1px solid #b3d9ff;
+  border-radius: 8px;
+  color: #004085;
+}
+
+.info-message i {
+  font-size: 48px;
+  color: #0066cc;
+  margin-bottom: 16px;
+}
+
+.info-message p {
+  margin: 0;
+  font-size: 16px;
+}
+
+.btn-back {
+  padding: 10px 16px;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #495057;
+}
+
+.btn-back:hover {
+  background: #e9ecef;
+  transform: translateX(-4px);
+}
+
+.loading, .error-message, .empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #6c757d;
+}
+
+.error-message {
+  color: #dc3545;
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 8px;
+}
+
+.empty-state i {
+  font-size: 48px;
+  color: #dee2e6;
+  margin-bottom: 16px;
+}
+
+.prescriptions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 24px;
+}
+
+.prescription-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.prescription-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.prescription-date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.status-badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-active {
+  background: #28a745;
+}
+
+.status-expired {
+  background: #dc3545;
+}
+
+.status-completed {
+  background: #6c757d;
+}
+
+.status-cancelled {
+  background: #ffc107;
+  color: #212529;
+}
+
+.status-renewed {
+  background: #17a2b8;
+}
+
+.card-body {
+  padding: 24px;
+}
+
+.diagnostic-section,
+.medications-section,
+.notes-section {
+  margin-bottom: 24px;
+}
+
+.diagnostic-section h3,
+.medications-section h3,
+.notes-section h4 {
+  color: #2c3e50;
+  font-size: 16px;
+  margin: 0 0 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.diagnostic-section p,
+.notes-section p {
+  color: #495057;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.medication-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.medication-item {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 16px;
+  border-left: 4px solid #667eea;
+}
+
+.medication-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.medication-header strong {
+  color: #2c3e50;
+  font-size: 16px;
+}
+
+.dci-badge {
+  background: #e9ecef;
+  color: #6c757d;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.medication-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #495057;
+  font-size: 14px;
+}
+
+.detail-row i {
+  color: #667eea;
+  width: 16px;
+}
+
+.instructions {
+  margin-top: 8px;
+  padding: 10px;
+  background: #fff3cd;
+  border-radius: 6px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: #856404;
+}
+
+.instructions i {
+  color: #ffc107;
+  margin-top: 2px;
+}
+
+.prescription-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.info-card {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.info-card i {
+  font-size: 24px;
+  color: #667eea;
+}
+
+.info-card div {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-card small {
+  color: #6c757d;
+  font-size: 12px;
+}
+
+.info-card strong {
+  color: #2c3e50;
+  font-size: 14px;
+}
+
+.notes-section {
+  background: #fff3cd;
+  border-left: 4px solid #ffc107;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.notes-section h4 {
+  color: #856404;
+  margin-bottom: 8px;
+}
+
+.notes-section p {
+  color: #856404;
+  font-size: 14px;
+}
+
+.card-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #dee2e6;
+  background: #f8f9fa;
+}
+
+.btn-details {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-details:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+@media (max-width: 768px) {
+  .prescriptions-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .prescription-info {
+    grid-template-columns: 1fr;
+  }
+}

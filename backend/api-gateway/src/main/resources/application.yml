@@ -1,0 +1,99 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  config:
+    import: optional:configserver:http://localhost:8888
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**
+        - id: auth-service-admin
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/admin/**
+        - id: auth-service-users
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/users/**
+        - id: prescription-service
+          uri: lb://prescription-service
+          predicates:
+            - Path=/api/v1/prescriptions/**
+        - id: prescription-ai-service
+          uri: lb://prescription-service
+          predicates:
+            - Path=/api/prescriptions/ai/**
+        - id: adherence-service
+          uri: lb://prescription-service
+          predicates:
+            - Path=/api/v1/adherence/**
+        - id: analytics-service
+          uri: lb://prescription-service
+          predicates:
+            - Path=/api/v1/analytics/**
+        - id: treatment-service
+          uri: lb://treatment-service
+          predicates:
+            - Path=/api/v1/traitements/**
+        - id: progress-service
+          uri: lb://treatment-service
+          predicates:
+            - Path=/api/v1/progress/**
+        - id: dossiermedical-consultations
+          uri: lb://dossiermedical-service
+          predicates:
+            - Path=/api/consultations/**
+        - id: dossiermedical-dialyses
+          uri: lb://dossiermedical-service
+          predicates:
+            - Path=/api/dialyses/**
+        - id: dossiermedical-examens
+          uri: lb://dossiermedical-service
+          predicates:
+            - Path=/api/examens/**
+        - id: treatment-parent
+          uri: lb://treatment-monitoring-service
+          predicates:
+            - Path=/api/parent/**
+        - id: treatment-doctor
+          uri: lb://treatment-monitoring-service
+          predicates:
+            - Path=/api/doctor/**
+        - id: treatment-admin
+          uri: lb://treatment-monitoring-service
+          predicates:
+            - Path=/api/treatment-admin/**
+
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:4200"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG

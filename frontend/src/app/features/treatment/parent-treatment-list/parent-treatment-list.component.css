@@ -1,0 +1,247 @@
+.treatment-list-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.header h2 {
+  color: #2c3e50;
+  font-size: 28px;
+  margin: 0;
+}
+
+.filter-section {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  margin: 0;
+}
+
+.form-group label {
+  color: #495057;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.form-control {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.info-message, .empty-state {
+  text-align: center;
+  padding: 40px;
+  background: #e7f3ff;
+  border: 1px solid #b3d9ff;
+  border-radius: 8px;
+  color: #004085;
+}
+
+.info-message i, .empty-state i {
+  font-size: 48px;
+  color: #0066cc;
+  margin-bottom: 16px;
+}
+
+.treatments-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 24px;
+}
+
+.treatment-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.treatment-date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.status-badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-active { background: #28a745; }
+.status-completed { background: #6c757d; }
+.status-suspended { background: #ffc107; color: #212529; }
+.status-cancelled { background: #dc3545; }
+
+.card-body {
+  padding: 24px;
+}
+
+.diagnostic-section,
+.objective-section,
+.medications-section,
+.recommendations-section,
+.notes-section {
+  margin-bottom: 24px;
+}
+
+.diagnostic-section h3,
+.objective-section h3,
+.medications-section h3,
+.recommendations-section h3,
+.notes-section h4 {
+  color: #2c3e50;
+  font-size: 16px;
+  margin: 0 0 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.diagnostic-section p,
+.objective-section p,
+.notes-section p {
+  color: #495057;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.objective-section {
+  background: #e7f3ff;
+  padding: 12px;
+  border-radius: 8px;
+  border-left: 4px solid #0066cc;
+}
+
+.medication-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.medication-item {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 16px;
+  border-left: 4px solid #667eea;
+}
+
+.medication-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.medication-header strong {
+  color: #2c3e50;
+  font-size: 16px;
+}
+
+.dci-badge {
+  background: #e9ecef;
+  color: #6c757d;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.medication-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #495057;
+  font-size: 14px;
+}
+
+.detail-row i {
+  color: #667eea;
+  width: 16px;
+}
+
+.instructions {
+  margin-top: 8px;
+  padding: 10px;
+  background: #fff3cd;
+  border-radius: 6px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: #856404;
+}
+
+.instructions i {
+  color: #ffc107;
+  margin-top: 2px;
+}
+
+.recommendations-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.recommendations-section li {
+  padding: 10px;
+  background: #d4edda;
+  border-left: 4px solid #28a745;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  color: #155724;
+}
+
+.notes-section {
+  background: #fff3cd;
+  border-left: 4px solid #ffc107;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.notes-section h4 {
+  color: #856404;
+  margin-bottom: 8px;
+}
+
+.notes-section p {
+  color: #856404;
+  font-size: 14px;
+}
