@@ -1,0 +1,68 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: auth-service
+  config:
+    import: optional:configserver:http://localhost:8888
+
+  # ─── Primary database: MongoDB ───────────────────────────────────────────────
+  data:
+    mongodb:
+      uri: mongodb+srv://PediaLink:PediaLink@pedialink.0d8a5qd.mongodb.net/pedialink?retryWrites=true&w=majority
+
+  # ─── Secondary / Backup database: H2 (embedded, file-based) ─────────────────
+  datasource:
+    url: jdbc:h2:file:./data/auth-backup;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    open-in-view: false
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: noreplypedialink@gmail.com
+    password: xdbjxiezvdbzsdif
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+app:
+  jwt:
+    secret: PediaLinkSuperSecretKeyForJwtToken2024MustBeAtLeast256BitsLong!!
+    expiration: 86400000
+  otp:
+    expiration-minutes: 10
+  cors:
+    allowed-origins: http://localhost:4200
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+logging:
+  level:
+    tn.pedialink.auth: DEBUG
+    org.springframework.security: DEBUG

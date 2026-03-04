@@ -1,0 +1,332 @@
+@if (loading) {
+  <div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Loading patients...</p>
+  </div>
+} @else {
+  <div class="patient-selector-card">
+    <div class="selector-content">
+      <div class="selector-icon">
+        <lucide-icon name="users" [size]="24"></lucide-icon>
+      </div>
+      <div class="selector-label">
+        <label class="form-label">Select Patient</label>
+        <p class="form-hint">Choose a patient to view their growth data</p>
+      </div>
+      <div class="selector-input">
+        <select class="form-select" [(ngModel)]="selectedPatientId" (ngModelChange)="onPatientSelected()">
+          <option value="">Select a patient</option>
+          @for (p of patients; track p.id) {
+            <option [value]="p.id">{{ p.fullName }}</option>
+          }
+        </select>
+      </div>
+    </div>
+  </div>
+
+  @if (selectedPatientId) {
+    <div class="tabs-container">
+      <div class="nav-tabs-modern">
+        <button class="tab-button" [class.active]="growthSubTab === 'measurements'" (click)="growthSubTab = 'measurements'">
+          <lucide-icon name="ruler" [size]="18"></lucide-icon>
+          <span>Measurements</span>
+        </button>
+        <button class="tab-button" [class.active]="growthSubTab === 'restrictions'" (click)="growthSubTab = 'restrictions'">
+          <lucide-icon name="alert-circle" [size]="18"></lucide-icon>
+          <span>Dietary Restrictions</span>
+        </button>
+        <button class="tab-button" [class.active]="growthSubTab === 'plans'" (click)="growthSubTab = 'plans'">
+          <lucide-icon name="clipboard-list" [size]="18"></lucide-icon>
+          <span>Nutritional Plans</span>
+        </button>
+      </div>
+    </div>
+
+    @if (growthSubTab === 'measurements') {
+      <div class="content-card measurements-card">
+        <div class="card-header-modern">
+          <div class="header-icon">
+            <lucide-icon name="activity" [size]="24"></lucide-icon>
+          </div>
+          <div class="header-content">
+            <h5 class="header-title">Growth Measurements</h5>
+            <p class="header-subtitle">Track patient's physical development over time</p>
+          </div>
+        </div>
+        <div class="card-body-modern">
+          @if (patientMeasurements.length === 0) {
+            <div class="empty-state">
+              <lucide-icon name="bar-chart-2" [size]="48" class="empty-icon"></lucide-icon>
+              <h6 class="empty-title">No Measurements Yet</h6>
+              <p class="empty-text">Start tracking growth measurements for this patient</p>
+            </div>
+          } @else {
+            <!-- BMI Chart -->
+            @if (hasBmiData()) {
+              <div class="chart-container">
+                <div class="chart-header">
+                  <div class="chart-title-section">
+                    <lucide-icon name="trending-up" [size]="20"></lucide-icon>
+                    <h6 class="chart-title">BMI Evolution Over Time</h6>
+                  </div>
+                  <p class="chart-subtitle">Track body mass index changes and growth patterns</p>
+                </div>
+                <div class="chart-wrapper">
+                  @if (chartOptions.series && chartOptions.series.length > 0) {
+                    <apx-chart
+                      #chart
+                      [series]="chartOptions.series"
+                      [chart]="chartOptions.chart!"
+                      [xaxis]="chartOptions.xaxis!"
+                      [yaxis]="chartOptions.yaxis!"
+                      [dataLabels]="chartOptions.dataLabels!"
+                      [stroke]="chartOptions.stroke!"
+                      [markers]="chartOptions.markers!"
+                      [grid]="chartOptions.grid!"
+                      [tooltip]="chartOptions.tooltip!"
+                      [legend]="chartOptions.legend!"
+                      [colors]="chartOptions.colors!"
+                    ></apx-chart>
+                  }
+                </div>
+              </div>
+            } @else {
+              <div class="chart-container">
+                <div class="empty-state">
+                  <lucide-icon name="line-chart" [size]="48" class="empty-icon"></lucide-icon>
+                  <h6 class="empty-title">No BMI Data Available</h6>
+                  <p class="empty-text">BMI will be calculated automatically when weight and height are recorded</p>
+                </div>
+              </div>
+            }
+
+            <!-- Measurements Grid -->
+            <div class="measurements-section">
+              <div class="section-title">
+                <lucide-icon name="list" [size]="20"></lucide-icon>
+                <h6>All Measurements ({{ patientMeasurements.length }} total)</h6>
+              </div>
+              
+              @if (patientMeasurements.length === 0) {
+                <div class="empty-state">
+                  <lucide-icon name="inbox" [size]="48" class="empty-icon"></lucide-icon>
+                  <h6 class="empty-title">No measurements found</h6>
+                  <p class="empty-text">Add measurements to track growth over time</p>
+                </div>
+              }
+              
+              <div class="measurements-grid">
+              @for (m of patientMeasurements; track trackByMeasurementId($index, m); let i = $index) {
+                <div class="measurement-card">
+                  <div class="measurement-date">
+                    <lucide-icon name="calendar" [size]="16"></lucide-icon>
+                    <span>{{ m.date | date:'MMM d, y' }}</span>
+                  </div>
+                  
+                  @if (!m.weight && !m.height && !m.bmi) {
+                    <div class="empty-measurement-notice">
+                      <lucide-icon name="alert-circle" [size]="32"></lucide-icon>
+                      <p><strong>No data recorded</strong></p>
+                      <p>This measurement entry exists but has no values recorded yet.</p>
+                    </div>
+                  }
+                  
+                  <div class="measurement-stats-simple">
+                    <div class="stat-box weight-box">
+                      <lucide-icon name="weight" [size]="24"></lucide-icon>
+                      <div class="stat-info">
+                        <span class="stat-value">{{ m?.weight || '-' }}</span>
+                        <span class="stat-unit">kg</span>
+                      </div>
+                      <span class="stat-label">WEIGHT</span>
+                    </div>
+                    
+                    <div class="stat-box height-box">
+                      <lucide-icon name="ruler" [size]="24"></lucide-icon>
+                      <div class="stat-info">
+                        <span class="stat-value">{{ m?.height || '-' }}</span>
+                        <span class="stat-unit">cm</span>
+                      </div>
+                      <span class="stat-label">HEIGHT</span>
+                    </div>
+                    
+                    <div class="stat-box bmi-box">
+                      <lucide-icon name="activity" [size]="24"></lucide-icon>
+                      <div class="stat-info">
+                        <span class="stat-value">{{ m?.bmi ? (m.bmi | number:'1.1-1') : '-' }}</span>
+                        <span class="stat-unit">{{ m?.bmi ? 'BMI' : '' }}</span>
+                      </div>
+                      <span class="stat-label">BODY MASS INDEX</span>
+                    </div>
+                    
+                    @if (m?.headCircumference) {
+                      <div class="stat-box head-box">
+                        <lucide-icon name="circle" [size]="24"></lucide-icon>
+                        <div class="stat-info">
+                          <span class="stat-value">{{ m.headCircumference }}</span>
+                          <span class="stat-unit">cm</span>
+                        </div>
+                        <span class="stat-label">HEAD CIRCUMFERENCE</span>
+                      </div>
+                    }
+                  </div>
+                  
+                  @if (m.notes) {
+                    <div class="measurement-notes">
+                      <lucide-icon name="file-text" [size]="14"></lucide-icon>
+                      <span>{{ m.notes }}</span>
+                    </div>
+                  }
+                </div>
+              }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    @if (growthSubTab === 'restrictions') {
+      <div class="content-card restrictions-card">
+        <div class="card-header-modern">
+          <div class="header-icon">
+            <lucide-icon name="shield-alert" [size]="24"></lucide-icon>
+          </div>
+          <div class="header-content">
+            <h5 class="header-title">Dietary Restrictions</h5>
+            <p class="header-subtitle">Allergies and food sensitivities to monitor</p>
+          </div>
+        </div>
+        <div class="card-body-modern">
+          @if (patientRestrictions.length === 0) {
+            <div class="empty-state">
+              <lucide-icon name="check-circle" [size]="48" class="empty-icon success"></lucide-icon>
+              <h6 class="empty-title">No Restrictions Recorded</h6>
+              <p class="empty-text">This patient has no dietary restrictions on file</p>
+            </div>
+          } @else {
+            <div class="restrictions-grid">
+              @for (r of patientRestrictions; track r.id) {
+                <div class="restriction-card" [attr.data-severity]="r.severity">
+                  <div class="restriction-header">
+                    <span class="severity-badge" [ngClass]="{
+                      'severe': r.severity === 'SEVERE',
+                      'high': r.severity === 'HIGH',
+                      'moderate': r.severity === 'MODERATE',
+                      'low': r.severity === 'LOW'
+                    }">
+                      <lucide-icon name="alert-triangle" [size]="14"></lucide-icon>
+                      {{ r.severity }}
+                    </span>
+                    <span class="restriction-type">{{ r.type }}</span>
+                  </div>
+                  <h6 class="restriction-name">{{ r.allergen }}</h6>
+                  @if (r.description) {
+                    <p class="restriction-description">{{ r.description }}</p>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    @if (growthSubTab === 'plans') {
+      <div class="content-card plans-card">
+        <div class="card-header-modern">
+          <div class="header-icon">
+            <lucide-icon name="utensils" [size]="24"></lucide-icon>
+          </div>
+          <div class="header-content">
+            <h5 class="header-title">Nutritional Plans</h5>
+            <p class="header-subtitle">Customized meal plans and dietary guidelines</p>
+          </div>
+        </div>
+        <div class="card-body-modern">
+          @if (patientPlans.length === 0) {
+            <div class="empty-state">
+              <lucide-icon name="clipboard" [size]="48" class="empty-icon"></lucide-icon>
+              <h6 class="empty-title">No Plans Assigned</h6>
+              <p class="empty-text">Create a nutritional plan to get started</p>
+            </div>
+          } @else {
+            <div class="plans-list">
+              @for (plan of patientPlans; track plan.id) {
+                <div class="plan-card">
+                  <div class="plan-header">
+                    <div class="plan-title-section">
+                      <h6 class="plan-title">{{ plan.title }}</h6>
+                      <span class="plan-status" [class.active]="plan.status === 'ACTIVE'">
+                        <lucide-icon name="check-circle" [size]="14"></lucide-icon>
+                        {{ plan.status }}
+                      </span>
+                    </div>
+                    @if (plan.description) {
+                      <p class="plan-description">{{ plan.description }}</p>
+                    }
+                  </div>
+                  
+                  <div class="plan-meta">
+                    <div class="meta-item">
+                      <lucide-icon name="calendar" [size]="16"></lucide-icon>
+                      <span>{{ plan.startDate | date:'MMM d, y' }} - {{ plan.endDate | date:'MMM d, y' }}</span>
+                    </div>
+                    @if (plan.goals) {
+                      <div class="meta-item">
+                        <lucide-icon name="target" [size]="16"></lucide-icon>
+                        <span>{{ plan.goals }}</span>
+                      </div>
+                    }
+                  </div>
+
+                  @if (plan.meals && plan.meals.length > 0) {
+                    <div class="plan-meals">
+                      <div class="meals-header">
+                        <lucide-icon name="utensils" [size]="16"></lucide-icon>
+                        <span>Meal Plan</span>
+                      </div>
+                      <div class="meals-list">
+                        @for (meal of plan.meals; track meal.name) {
+                          <div class="meal-item">
+                            <div class="meal-header">
+                              <span class="meal-name">{{ meal.name }}</span>
+                              <div class="meal-details">
+                                @if (meal.time) {
+                                  <span class="meal-time">
+                                    <lucide-icon name="clock" [size]="12"></lucide-icon>
+                                    {{ meal.time }}
+                                  </span>
+                                }
+                                @if (meal.calories) {
+                                  <span class="meal-calories">{{ meal.calories }} cal</span>
+                                }
+                              </div>
+                            </div>
+                            @if (meal.description) {
+                              <p class="meal-description">{{ meal.description }}</p>
+                            }
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+  } @else {
+    <div class="empty-state-card">
+      <div class="empty-state-content">
+        <div class="empty-state-icon">
+          <lucide-icon name="user-search" [size]="64"></lucide-icon>
+        </div>
+        <h5 class="empty-state-title">Select a Patient</h5>
+        <p class="empty-state-text">Choose a patient from the dropdown above to view their growth data and nutritional information</p>
+      </div>
+    </div>
+  }
+}
