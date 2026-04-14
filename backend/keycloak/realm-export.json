@@ -1,0 +1,113 @@
+{
+  "realm": "pedialink",
+  "enabled": true,
+  "displayName": "PediaLink",
+  "displayNameHtml": "<b>PediaLink</b>",
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "registrationAllowed": false,
+  "resetPasswordAllowed": true,
+  "sslRequired": "none",
+  "accessTokenLifespan": 86400,
+  "ssoSessionMaxLifespan": 86400,
+  "offlineSessionMaxLifespan": 86400,
+
+  "roles": {
+    "realm": [
+      { "name": "ADMIN",     "description": "Platform administrator", "composite": false, "clientRole": false },
+      { "name": "DOCTOR",    "description": "Medical doctor",          "composite": false, "clientRole": false },
+      { "name": "PARENT",    "description": "Child parent / guardian", "composite": false, "clientRole": false },
+      { "name": "INFIRMIER", "description": "Nurse / care assistant",  "composite": false, "clientRole": false }
+    ]
+  },
+
+  "clients": [
+    {
+      "clientId": "pedialink-app",
+      "name": "PediaLink Application",
+      "description": "Public client used by the Angular frontend and auth-service bridge",
+      "enabled": true,
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "serviceAccountsEnabled": false,
+      "authorizationServicesEnabled": false,
+      "bearerOnly": false,
+      "frontchannelLogout": false,
+      "protocol": "openid-connect",
+      "redirectUris": [
+        "http://localhost:4200/*",
+        "*"
+      ],
+      "webOrigins": [
+        "http://localhost:4200",
+        "+"
+      ],
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "profile",
+        "roles",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    }
+  ],
+
+  "users": [
+    {
+      "username": "admin@pedialink.tn",
+      "email": "admin@pedialink.tn",
+      "firstName": "Super",
+      "lastName": "Admin",
+      "emailVerified": true,
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Admin123!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["ADMIN"]
+    },
+    {
+      "username": "doctor@pedialink.tn",
+      "email": "doctor@pedialink.tn",
+      "firstName": "Test",
+      "lastName": "Doctor",
+      "emailVerified": true,
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Doctor123!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["DOCTOR"]
+    },
+    {
+      "username": "parent@pedialink.tn",
+      "email": "parent@pedialink.tn",
+      "firstName": "Test",
+      "lastName": "Parent",
+      "emailVerified": true,
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Parent123!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["PARENT"]
+    }
+  ]
+}

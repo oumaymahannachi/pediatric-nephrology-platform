@@ -1,0 +1,221 @@
+### ─────────────────────────────────────────────────────────────────────────
+### PediaLink – HTTP test script (VS Code REST Client / IntelliJ .http)
+###
+### Pre-requisites:
+###   1. cd backend && make fresh        (builds everything, starts all services)
+###   2. Wait ~2 min for Keycloak + services to become healthy
+###
+### Test accounts pre-loaded by Keycloak realm import:
+###   admin@pedialink.tn  /  Admin1234!   (role: ADMIN)
+###   doctor@pedialink.tn /  Doctor1234!  (role: DOCTOR)
+###   parent@pedialink.tn /  Parent1234!  (role: PARENT)
+###
+### New accounts created via signup are synced to both MongoDB and Keycloak.
+### ─────────────────────────────────────────────────────────────────────────
+
+@gatewayUrl = http://localhost:8090
+@keycloakUrl = http://localhost:8080
+
+### ══════════════════════════════════════════════════════════════════════════
+### 1. KEYCLOAK HEALTH
+### ══════════════════════════════════════════════════════════════════════════
+
+### Keycloak realm info (confirms Keycloak is up and realm is imported)
+GET {{keycloakUrl}}/realms/pedialink
+Accept: application/json
+
+###
+
+### ══════════════════════════════════════════════════════════════════════════
+### 2. SIGNUP (new user – NOT a pre-loaded test user)
+### ══════════════════════════════════════════════════════════════════════════
+
+### 2a. Signup as a new PARENT (email OTP will print to auth-service console)
+POST {{gatewayUrl}}/api/auth/signup
+Content-Type: application/json
+
+{
+  "fullName": "Marie Dupont",
+  "email": "marie@test.tn",
+  "password": "Test1234!",
+  "role": "PARENT",
+  "phone": "+21612345678",
+  "cin": "12345678"
+}
+
+###
+
+### 2b. Signup as a new DOCTOR
+POST {{gatewayUrl}}/api/auth/signup
+Content-Type: application/json
+
+{
+  "fullName": "Dr Ahmed Ben Ali",
+  "email": "dr.ahmed@test.tn",
+  "password": "Test1234!",
+  "role": "DOCTOR",
+  "phone": "+21698765432",
+  "cin": "87654321",
+  "specialization": "Pediatrics",
+  "licenseNumber": "LIC-001",
+  "clinicName": "PediaCare Clinic"
+}
+
+###
+
+### ══════════════════════════════════════════════════════════════════════════
+### 3. LOGIN (pre-loaded Keycloak test users – no signup needed)
+### ══════════════════════════════════════════════════════════════════════════
+### ⚠ These users are in Keycloak only; profile endpoints (GET /api/users/me)
+###   require registration via signup to exist in MongoDB too.
+
+### 3a. Login as ADMIN  →  copy the "token" value into @adminToken below
+POST {{gatewayUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@pedialink.tn",
+  "password": "Admin1234!"
+}
+
+###
+
+### 3b. Login as DOCTOR
+POST {{gatewayUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "doctor@pedialink.tn",
+  "password": "Doctor1234!"
+}
+
+###
+
+### 3c. Login as PARENT
+POST {{gatewayUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "parent@pedialink.tn",
+  "password": "Parent1234!"
+}
+
+###
+
+### ══════════════════════════════════════════════════════════════════════════
+### 4. OTP FLOW (for newly registered users)
+### ══════════════════════════════════════════════════════════════════════════
+
+### 4a. Request OTP for email verification (check auth-service console output)
+POST {{gatewayUrl}}/api/auth/request-otp
+Content-Type: application/json
+
+{
+  "email": "marie@test.tn",
+  "purpose": "VERIFY_EMAIL"
+}
+
+###
+
+### 4b. Verify OTP  (replace 123456 with the code from auth-service console)
+POST {{gatewayUrl}}/api/auth/verify-otp
+Content-Type: application/json
+
+{
+  "email": "marie@test.tn",
+  "code": "123456",
+  "purpose": "VERIFY_EMAIL"
+}
+
+###
+
+### ══════════════════════════════════════════════════════════════════════════
+### 5. PROTECTED ENDPOINTS  (paste token from step 3 below)
+### ══════════════════════════════════════════════════════════════════════════
+
+@adminToken  = PASTE_ADMIN_TOKEN_HERE
+@doctorToken = PASTE_DOCTOR_TOKEN_HERE
+@parentToken = PASTE_PARENT_TOKEN_HERE
+
+### 5a. GET /api/admin/**  – requires ADMIN role
+###     Should return 200 with admin token, 403 with doctor/parent token
+GET {{gatewayUrl}}/api/admin/users
+Authorization: Bearer {{adminToken}}
+
+###
+
+### 5b. GET /api/doctor/**  – requires DOCTOR role
+GET {{gatewayUrl}}/api/doctor/patients
+Authorization: Bearer {{doctorToken}}
+
+###
+
+### 5c. GET /api/parent/**  – requires PARENT role
+GET {{gatewayUrl}}/api/parent/children
+Authorization: Bearer {{parentToken}}
+
+###
+
+### 5d. Unauthenticated request – should return 401
+GET {{gatewayUrl}}/api/admin/users
+
+###
+
+### 5e. Wrong role – PARENT trying to access /api/doctor/** → 403
+GET {{gatewayUrl}}/api/doctor/patients
+Authorization: Bearer {{parentToken}}
+
+###
+
+### ══════════════════════════════════════════════════════════════════════════
+### 6. PASSWORD RESET FLOW
+### ══════════════════════════════════════════════════════════════════════════
+
+### 6a. Request reset OTP
+POST {{gatewayUrl}}/api/auth/request-otp
+Content-Type: application/json
+
+{
+  "email": "marie@test.tn",
+  "purpose": "RESET_PASSWORD"
+}
+
+###
+
+### 6b. Reset password  (replace 654321 with the OTP from console)
+POST {{gatewayUrl}}/api/auth/reset-password
+Content-Type: application/json
+
+{
+  "email": "marie@test.tn",
+  "code": "654321",
+  "newPassword": "NewPass1234!"
+}
+
+###
+
+### 6c. Login with new password
+POST {{gatewayUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "marie@test.tn",
+  "password": "NewPass1234!"
+}
+
+###
+
+### ══════════════════════════════════════════════════════════════════════════
+### 7. INFRASTRUCTURE
+### ══════════════════════════════════════════════════════════════════════════
+
+### Eureka dashboard
+GET http://localhost:8761
+
+###
+
+### Keycloak admin console
+### Open in browser: http://localhost:8080  (admin / admin)
+### Navigate to: Realm pedialink → Users / Roles / Clients
+
+###
